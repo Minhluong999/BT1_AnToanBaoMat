@@ -1,5 +1,7 @@
-#Môn an toàn bảo mật 
-#Sinh viên thực hiện : Lăng Nguyễn Minh Lượng   MSSV: K225480106044
+# Môn An toàn bảo mật 
+
+# Sinh viên thực hiện : Lăng Nguyễn Minh Lượng   MSSV: K225480106044
+
 # Bài tập 1: 
 # Bài làm
 ## Các phương pháp mã hoá cổ điển:
