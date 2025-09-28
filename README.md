@@ -25,25 +25,29 @@
 
 ### Thuật toán
 
-Mã hoá: E(p) = (p + k) mod 26
+  Mã hoá: E(p) = (p + k) mod 26
 
-với p = 0..25 (A=0,B=1...), k ∈ {0..25}
+  với p = 0..25 (A=0,B=1...), k ∈ {0..25}
 
-Giải mã: D(c) = (c - k) mod 26
+  Giải mã: D(c) = (c - k) mod 26
 
-### Không gian khoá: 26 (k = 0..25)
+### Không gian khoá: 
+  26 (k = 0..25)
 
 ### Cách phá mã (không cần khoá):
 
-Brute-force thử 26 khả năng.
+  Brute-force thử 26 khả năng.
 
-Phân tích tần suất chữ cái (E, T, A...).
+  Phân tích tần suất chữ cái (E, T, A...).
 
-Với ngôn ngữ có cấu trúc, 1–2 lượt thử là đủ.
+  Với ngôn ngữ có cấu trúc, 1–2 lượt thử là đủ.
 
 ### MÃ HOÁ
+
 <img width="793" height="693" alt="image" src="https://github.com/user-attachments/assets/f7f61ec2-8009-45ad-b3d0-bc49393b6af9" />
+
 ### GIẢI MÃ
+
 <img width="786" height="678" alt="image" src="https://github.com/user-attachments/assets/62ad0907-ec0e-4a52-97fa-1994b56dd912" />
 
 ## 2. Affine
@@ -51,21 +55,23 @@ Với ngôn ngữ có cấu trúc, 1–2 lượt thử là đủ.
 
 ### Thuật toán
 
-Mã hoá: E(p) = (a * p + b) mod 26, với p∈{0..25}
+  Mã hoá: E(p) = (a * p + b) mod 26, với p∈{0..25}
 
-Giải mã: D(c) = a^{-1} * (c - b) mod 26, trong đó a^{-1} là nghịch đảo modulo 26 (a * a^{-1} ≡ 1 mod 26)
+  Giải mã: D(c) = a^{-1} * (c - b) mod 26, trong đó a^{-1} là nghịch đảo modulo 26 (a * a^{-1} ≡ 1 mod 26)
 
-### Điều kiện: gcd(a,26) = 1 (để tồn tại nghịch đảo). Các a hợp lệ: 1,3,5,7,9,11,15,17,19,21,23,25 (12 giá trị).
+  Điều kiện: gcd(a,26) = 1 (để tồn tại nghịch đảo). Các a hợp lệ: 1,3,5,7,9,11,15,17,19,21,23,25 (12 giá trị).
 
-### Không gian khoá: 12 lựa chọn cho a × 26 lựa chọn cho b = 312 khả năng.
+### Không gian khoá: 
+
+  12 lựa chọn cho a × 26 lựa chọn cho b = 312 khả năng.
 
 ### Cách phá mã (không cần khoá):
 
-Brute-force trên tất cả (a,b) (312 trường hợp) và dùng kiểm tra ngôn ngữ (wordlist/IC) để chọn ra.
+  Brute-force trên tất cả (a,b) (312 trường hợp) và dùng kiểm tra ngôn ngữ (wordlist/IC) để chọn ra.
 
-Phân tích tần suất (một số chuyển đổi tuyến tính của tần suất): tìm ánh xạ giữa hai chữ cái có tần xuất lớn nhất.
+  Phân tích tần suất (một số chuyển đổi tuyến tính của tần suất): tìm ánh xạ giữa hai chữ cái có tần xuất lớn nhất.
 
-Nếu có plaintext nổi bật (known-plaintext) dễ phá.
+  Nếu có plaintext nổi bật (known-plaintext) dễ phá.
 ### MÃ HOÁ
 
 <img width="1325" height="720" alt="image" src="https://github.com/user-attachments/assets/1eb44626-b673-4328-9d05-45bab3f8de76" />
