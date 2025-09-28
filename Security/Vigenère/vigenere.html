@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Vigenère Cipher — Tool</title>
+<style>
+  :root{
+    --bg:#0d1117; --card:#0f1724; --accent:#6ee7b7; --muted:#9fb0c8;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; min-height:100vh;
+    font-family: Inter, Roboto, system-ui, Arial;
+    background:linear-gradient(180deg,#071021 0%, #0d1117 100%);
+    color:#e6eef7; display:flex; align-items:center; justify-content:center; padding:28px;
+  }
+  .card{
+    width:100%; max-width:980px;
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border-radius:12px; padding:18px; box-shadow: 0 12px 36px rgba(2,6,23,0.7);
+    display:grid; grid-template-columns: 1fr 360px; gap:18px;
+  }
+  header{grid-column:1/-1; display:flex; justify-content:space-between; align-items:center}
+  header h1{margin:0;font-size:18px}
+  header p{margin:0;color:var(--muted);font-size:13px}
+  .panel{background:var(--card); padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,0.03)}
+  label{display:block;color:var(--muted);font-size:13px;margin-bottom:6px}
+  textarea,input,select{width:100%; padding:10px 12px; border-radius:8px; border:1px solid rgba(255,255,255,0.04); background:transparent; color:inherit; font-size:14px; outline:none}
+  textarea{min-height:140px; resize:vertical}
+  .row{display:flex; gap:8px}
+  .row > *{flex:1}
+  .controls{display:flex; gap:8px; margin-top:10px; flex-wrap:wrap}
+  button{background:linear-gradient(90deg,var(--accent), #34d399); border:none; color:#052018; padding:10px 12px; border-radius:8px; cursor:pointer; font-weight:700}
+  button.ghost{background:transparent; border:1px solid rgba(255,255,255,0.06); color:var(--muted)}
+  .note{color:var(--muted); margin-top:8px; font-size:13px}
+  .warn{color:#ffd2d2; margin-top:8px; font-size:13px}
+  .output{min-height:120px; white-space:pre-wrap; font-family:ui-monospace,Menlo,monospace; background:rgba(255,255,255,0.01); padding:12px; border-radius:8px; border:1px solid rgba(255,255,255,0.03)}
+  footer{grid-column:1/-1;text-align:center;color:var(--muted);font-size:12px;margin-top:8px}
+  @media (max-width:880px){ .card{grid-template-columns:1fr} .right{order:2} }
+</style>
+</head>
+<body>
+  <div class="card">
+    <header>
+      <div>
+        <h1>Vigenère Cipher — Mã hóa & Giải mã</h1>
+        <p>Giữ nguyên chữ hoa/chữ thường — khóa chỉ dùng chữ cái (khóa sẽ lặp)</p>
+      </div>
+      <div style="text-align:right">
+        <div style="background:rgba(255,255,255,0.02);padding:6px 10px;border-radius:8px;color:var(--muted);font-size:13px">A=0 ... Z=25</div>
+      </div>
+    </header>
+
+    <section class="panel left">
+      <label for="text">Văn bản (Plaintext / Ciphertext)</label>
+      <textarea id="text" placeholder="Nhập văn bản..."></textarea>
+
+      <div style="margin-top:8px" class="row">
+        <div>
+          <label for="key">Khóa (keyword)</label>
+          <input id="key" placeholder="vd: SECRET" />
+        </div>
+        <div>
+          <label for="mode">Chế độ</label>
+          <select id="mode">
+            <option value="encrypt">Mã hóa</option>
+            <option value="decrypt">Giải mã</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button id="runBtn">Thực hiện</button>
+        <button id="copyBtn" class="ghost">Sao chép</button>
+        <button id="clearBtn" class="ghost">Xóa</button>
+      </div>
+
+      <div id="warn" class="warn" style="display:none"></div>
+      <div class="note">Lưu ý: khóa sẽ tự động loại bỏ ký tự không phải chữ; nếu khóa rỗng sau chuẩn hóa, sẽ không thể thực hiện.</div>
+    </section>
+
+    <aside class="panel right">
+      <label>Kết quả</label>
+      <div id="output" class="output" aria-live="polite"></div>
+
+      <label style="margin-top:12px">Preview khóa (đã chuẩn hóa)</label>
+      <div id="keyPreview" class="note" style="padding:8px;background:rgba(255,255,255,0.01);border-radius:6px;border:1px solid rgba(255,255,255,0.03)">—</div>
+    </aside>
+
+    <footer>Phiên bản: 1.0 — Bấm "Thực hiện" để mã hóa/giải mã.</footer>
+  </div>
+
+<script>
+  // Helpers
+  const textEl = document.getElementById('text');
+  const keyEl = document.getElementById('key');
+  const modeEl = document.getElementById('mode');
+  const runBtn = document.getElementById('runBtn');
+  const outputEl = document.getElementById('output');
+  const keyPreview = document.getElementById('keyPreview');
+  const warnEl = document.getElementById('warn');
+  const copyBtn = document.getElementById('copyBtn');
+  const clearBtn = document.getElementById('clearBtn');
+
+  function sanitizeKey(raw) {
+    // chỉ giữ chữ cái a-z, chuyển về lowercase
+    return (raw || '').split('').filter(ch => /[A-Za-z]/.test(ch)).map(ch => ch.toLowerCase()).join('');
+  }
+
+  function showWarn(msg) {
+    if (!msg) { warnEl.style.display = 'none'; warnEl.textContent = ''; }
+    else { warnEl.style.display = 'block'; warnEl.textContent = msg; }
+  }
+
+  function shiftFromChar(ch) { // ch lowercase a-z
+    return ch.charCodeAt(0) - 97;
+  }
+
+  function vigenereProcess(input, rawKey, mode) {
+    const key = sanitizeKey(rawKey);
+    keyPreview.textContent = key.length ? key : '— (không hợp lệ)';
+    if (!key.length) {
+      showWarn('Khóa không hợp lệ: sau khi loại ký tự không phải chữ, khóa rỗng.');
+      return null;
+    }
+    showWarn('');
+    let out = '';
+    let kIdx = 0;
+    const kLen = key.length;
+    for (let i = 0; i < input.length; i++) {
+      const ch = input[i];
+      if (/[A-Za-z]/.test(ch)) {
+        const base = (ch === ch.toUpperCase()) ? 65 : 97;
+        const p = ch.charCodeAt(0) - base;
+        const s = shiftFromChar(key[kIdx % kLen]);
+        let c;
+        if (mode === 'encrypt') {
+          c = (p + s) % 26;
+        } else {
+          c = (p - s + 26) % 26;
+        }
+        out += String.fromCharCode(base + c);
+        kIdx++;
+      } else {
+        // giữ nguyên và KHÔNG tăng kIdx
+        out += ch;
+      }
+    }
+    return out;
+  }
+
+  runBtn.addEventListener('click', () => {
+    const txt = textEl.value || '';
+    const rawKey = keyEl.value || '';
+    const mode = modeEl.value;
+    if (!txt) { showWarn('Nhập văn bản trước.'); return; }
+    const res = vigenereProcess(txt, rawKey, mode);
+    if (res === null) return;
+    outputEl.textContent = res;
+  });
+
+  copyBtn.addEventListener('click', () => {
+    const txt = outputEl.textContent || '';
+    if (!txt) { showWarn('Chưa có kết quả để sao chép.'); return; }
+    navigator.clipboard?.writeText(txt).then(()=> {
+      showWarn('Đã sao chép vào clipboard.');
+      setTimeout(()=> showWarn(''),1300);
+    }).catch(()=> showWarn('Trình duyệt chặn thao tác clipboard.'));
+  });
+
+  clearBtn.addEventListener('click', () => {
+    textEl.value = '';
+    keyEl.value = '';
+    outputEl.textContent = '';
+    keyPreview.textContent = '—';
+    showWarn('');
+  });
+
+  // Live preview key sanitized
+  keyEl.addEventListener('input', () => {
+    keyPreview.textContent = sanitizeKey(keyEl.value) || '—';
+  });
+
+  // init
+  keyPreview.textContent = '—';
+</script>
+</body>
+</html>

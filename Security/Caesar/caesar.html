@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Caesar Cipher Tool</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            padding: 20px;
+        }
+        h2 {
+            color: #333;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            margin: 10px 0;
+            padding: 10px;
+            font-size: 16px;
+        }
+        input, select, button {
+            margin: 8px 0;
+            padding: 8px;
+            font-size: 16px;
+        }
+        button {
+            cursor: pointer;
+            background: #0078d7;
+            border: none;
+            color: white;
+            border-radius: 5px;
+        }
+        button:hover {
+            background: #005fa3;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 10px;
+            background: #fff;
+            border: 1px solid #ddd;
+            font-size: 16px;
+            min-height: 50px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Công cụ Mã hóa & Giải mã Caesar Cipher</h2>
+
+    <label for="inputText">Nhập văn bản:</label>
+    <textarea id="inputText"></textarea>
+
+    <br>
+    <label for="key">Khóa (số từ 1 đến 25):</label>
+    <input type="number" id="key" min="1" max="25" value="3">
+
+    <br>
+    <label for="mode">Chọn chế độ:</label>
+    <select id="mode">
+        <option value="encrypt">Mã hóa</option>
+        <option value="decrypt">Giải mã</option>
+    </select>
+
+    <br>
+    <button onclick="processText()">Thực hiện</button>
+
+    <h3>Kết quả:</h3>
+    <div class="result" id="output"></div>
+
+    <script>
+        function shiftChar(c, key) {
+            if (/[A-Z]/.test(c)) {
+                return String.fromCharCode((c.charCodeAt(0) - 65 + key + 26) % 26 + 65);
+            } else if (/[a-z]/.test(c)) {
+                return String.fromCharCode((c.charCodeAt(0) - 97 + key + 26) % 26 + 97);
+            }
+            return c;
+        }
+
+        function caesarCipher(text, key) {
+            let result = "";
+            for (let i = 0; i < text.length; i++) {
+                result += shiftChar(text[i], key);
+            }
+            return result;
+        }
+
+        function processText() {
+            let text = document.getElementById("inputText").value;
+            let key = parseInt(document.getElementById("key").value);
+            let mode = document.getElementById("mode").value;
+
+            if (mode === "decrypt") key = -key;
+
+            let output = caesarCipher(text, key);
+            document.getElementById("output").innerText = output;
+        }
+    </script>
+</body>
+</html>
