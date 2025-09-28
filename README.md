@@ -125,7 +125,9 @@
 
 - Giải mã: D(c_i) = (c_i - k_{i mod m}) mod 26
 
-### Không gian khoá: 26^m nếu key dài m. Nếu m không biết, attacker dùng Kasiski & Friedman để ước lượng m.
+### Không gian khoá:
+
+- 26^m nếu key dài m. Nếu m không biết, attacker dùng Kasiski & Friedman để ước lượng m.
 
 ### Cách phá mã (không cần khoá):
 
@@ -138,213 +140,51 @@
 - Brute-force nhỏ cho m nhỏ; dictionary attack nếu key là từ thực.
 ### MÃ HOÁ
 <img width="1270" height="656" alt="image" src="https://github.com/user-attachments/assets/19a388fd-5c3b-4c11-b2ec-49b09421059d" />
+
 ### GIẢI MÃ
+
 <img width="1274" height="669" alt="image" src="https://github.com/user-attachments/assets/f7c78a74-6878-413b-9190-3b2049823484" />
 
 ## 5. Playfair
-## Tên gọi:
-- Được gọi là "Mã hóa Playfair" hoặc "Phương pháp mã hóa cặp chữ cái Playfair".
-- Đây là một phương pháp mã hóa cổ điển được phát minh bởi Charles Wheatstone vào năm 1854, nhưng được đặt tên theo Lord Playfair, người đã phổ biến nó.
-## Thuật toán mã hoá, thuật toán giải mã
-### Thuật toán mã hoá
-- Tạo bảng khóa (5×5 key square)
-  + Chọn một keyword
-  + Loại bỏ ký tự không phải chữ, chuyển về chữ hoa, và loại bỏ chữ trùng lặp giữ thứ tự xuất hiện.
-  + Gộp bảng chữ cái còn lại (thường ghép I và J thành một chữ; chọn quy ước I/J hoặc loại J) để được đủ 25 ký tự.
-  + Điền 5×5 theo thứ tự: đầu là ký tự trong keyword (sau khi loại trùng), tiếp theo là các chữ cái chưa dùng. Kết quả là một ma trận 5×5.
-- Chuẩn bị bản rõ (plaintext preprocessing)
-  + Loại ký tự không phải chữ (tuỳ lựa chọn: có thể loại bỏ khoảng trắng/dấu câu).
-  + Chuyển về chữ hoa (hoặc chữ thường) và thay thế J bằng I nếu dùng quy ước đó.
-  + Tách bản rõ thành cặp ký tự (digraphs) theo thứ tự từ trái sang phải.
-  + Nếu trong một digraph hai ký tự giống nhau (ví dụ AA), chèn ký tự đệm (thường là X, đôi khi là Q) giữa hai ký tự để tránh cặp giống nhau; sau đó tiếp tục tách tiếp.
-- Mã hóa từng digraph: Với digraph gồm hai ký tự (A, B) và vị trí của chúng trong ma trận là (rA, cA) và (rB, cB) (hàng, cột, 0-based hoặc 1-based đều được nhưng giữ nhất quán)
-### Thuật toán giải hoá
-- Tạo lại bảng khóa: Dùng cùng keyword và cùng quy ước (I/J) như khi mã hóa để xây ma trận 5×5 giống hệt.
-- Chuẩn bị ciphertext: Loại bỏ ký tự lạ nếu cần; tách ciphertext thành digraphs theo 2 ký tự liên tiếp (không cần xử lý dấu đệm ở bước này).
-- Giải mã từng digraph:
-  + Nếu cùng hàng: thay bằng ký tự ngay trái của mỗi ký tự (vòng vòng sang phải cho wrap-around).
-  + Nếu cùng cột: thay bằng ký tự ngay trên mỗi ký tự (vòng vòng xuống cho wrap-around).
-  + Nếu hình chữ nhật: tương tự mã hóa nhưng đổi cột (lấy góc còn lại):
-- Xử lý hậu kỳ (post-processing): Sau khi ghép các digraph được giải mã, có thể loại bỏ các ký tự đệm (X hoặc Q) đã chèn khi mã hóa. Tuy nhiên cần thận trọng: không phải mọi X là padding — đôi khi X thực sự thuộc plaintext. Việc loại bỏ thường dựa vào qui ước đã sử dụng (ví dụ: chèn X chỉ khi hai chữ cái giống nhau) và/hoặc kiểm tra ngữ nghĩa.
-## Không gian khoá
-- Không gian khóa (key space) của Playfair Cipher được xác định bởi tất cả các cách sắp xếp có thể của 25 ký tự trong bảng 5×5 (vì phải gộp I và J lại làm một).
-- Số lượng khóa lý thuyết chính là số hoán vị của 25 ký tự: 25!(xấp xỉ 1.55×10^25)
-## Cách phá mã (mà không cần khoá)
-- Thu thập digraphs:
-  + Tách ciphertext thành các cặp ký tự liên tiếp.
-  + Ghi nhận tần suất xuất hiện của từng digraph trong ciphertext.
-- So sánh với phân bố digraph chuẩn của ngôn ngữ:
-  + Mỗi ngôn ngữ có phân bố digraph phổ biến (ví dụ trong tiếng Anh: TH, HE, IN, ER…).
-  + So sánh digraphs ciphertext với bảng tần suất chuẩn để đoán các cặp tương ứng.
-- Ước lượng bảng khóa từng phần:
-  + Dựa trên các digraph phổ biến, suy ra các cặp ký tự nằm cùng hàng, cùng cột hoặc tạo thành hình chữ nhật.
-  + Từ đó dần dần lấp các vị trí của bảng 5×5.
-## Cài đặt thuật toán mã hoá và giải mã bằng code C++ và bằng html+css+javascript
-``` html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Playfair Cipher</title>
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        background: linear-gradient(to right, #74ebd5, #ACB6E5);
-        color: #333;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        margin: 0;
-    }
-    .container {
-        background-color: rgba(255, 255, 255, 0.9);
-        padding: 30px;
-        border-radius: 15px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-        max-width: 500px;
-        width: 100%;
-    }
-    h1 {
-        text-align: center;
-        margin-bottom: 25px;
-        color: #333;
-    }
-    input, textarea, button {
-        width: 100%;
-        padding: 10px;
-        margin-top: 10px;
-        margin-bottom: 15px;
-        border-radius: 5px;
-        border: 1px solid #aaa;
-        font-size: 16px;
-    }
-    button {
-        background-color: #4CAF50;
-        color: white;
-        border: none;
-        cursor: pointer;
-    }
-    button:hover {
-        background-color: #45a049;
-    }
-    label {
-        font-weight: bold;
-    }
-</style>
-</head>
-<body>
-<div class="container">
-    <h1>Playfair Cipher</h1>
-    <label for="text">Nhập văn bản:</label>
-    <textarea id="text" rows="3" placeholder="Nhập văn bản..."></textarea>
+### Tên: Playfair
 
-    <label for="key">Nhập khóa:</label>
-    <input type="text" id="key" placeholder="Nhập khóa...">
+### Thuật toán (5×5 key square, thường hợp I/J):
 
-    <button onclick="encrypt()">Mã hóa</button>
-    <button onclick="decrypt()">Giải mã</button>
+- Tạo key square 5×5 từ khoá: ghi các chữ cái khoá (loại trùng lặp), sau đó điền các chữ cái còn lại (thường hợp J→I để có 25 chữ cái).
 
-    <label for="output">Kết quả:</label>
-    <textarea id="output" rows="3" readonly></textarea>
-</div>
+- Chia plaintext thành các digraphs (cặp). Qui tắc:
 
-<script>
-function normalizeChar(c) {
-    c = c.toUpperCase();
-    if (c === 'J') c = 'I';
-    return c;
-}
+-- Nếu cặp có hai chữ cái giống nhau, chèn chữ cái filler (thường 'X') giữa chúng rồi tiếp tục (ví dụ "BALLOON" → BA LX LO ON).
 
-function createMatrix(key) {
-    let matrix = '';
-    let used = new Set();
-    key = key.toUpperCase();
+-- Nếu độ dài lẻ, thêm filler ở cuối.
 
-    for (let ch of key) {
-        if (/[A-Z]/.test(ch)) {
-            ch = normalizeChar(ch);
-            if (!used.has(ch)) {
-                matrix += ch;
-                used.add(ch);
-            }
-        }
-    }
+- Mã hoá mỗi digraph (A,B):
 
-    for (let ch = 'A'.charCodeAt(0); ch <= 'Z'.charCodeAt(0); ch++) {
-        let c = String.fromCharCode(ch);
-        if (c === 'J') continue;
-        if (!used.has(c)) {
-            matrix += c;
-            used.add(c);
-        }
-    }
-    return matrix;
-}
+-- Nếu A và B ở cùng hàng: thay mỗi chữ bằng chữ ngay bên phải (wrap-around).
 
-function findPosition(c, matrix) {
-    c = normalizeChar(c);
-    let idx = matrix.indexOf(c);
-    return { row: Math.floor(idx / 5), col: idx % 5 };
-}
+-- Nếu cùng cột: thay bằng chữ ngay dưới (wrap-around).
 
-function prepareText(text) {
-    text = text.toUpperCase().replace(/[^A-Z]/g, '').replace(/J/g, 'I');
-    let result = '';
-    for (let i = 0; i < text.length; i++) {
-        result += text[i];
-        if (i + 1 < text.length && text[i] === text[i + 1]) {
-            result += 'X';
-        }
-    }
-    if (result.length % 2 !== 0) result += 'X';
-    return result;
-}
+-- Nếu khác hàng/cột: thay mỗi chữ bằng chữ ở cùng hàng nhưng cột của chữ kia (tức hình chữ nhật swap columns).
 
-function processPlayfair(text, key, encrypt=true) {
-    let matrix = createMatrix(key);
-    let prepared = prepareText(text);
-    let shift = encrypt ? 1 : 4;
-    let result = '';
+- Giải mã đảo ngược quy tắc (trái/trên thay vì phải/dưới).
 
-    for (let i = 0; i < prepared.length; i += 2) {
-        let a = prepared[i], b = prepared[i + 1];
-        let posA = findPosition(a, matrix);
-        let posB = findPosition(b, matrix);
+### Không gian khoá:
+- Khoá là chuỗi sắp xếp 25 ký tự → 25! (rất lớn). Nhưng nhiều key tương đương nếu dùng quy tắc I/J.
 
-        if (posA.row === posB.row) {
-            result += matrix[posA.row * 5 + (posA.col + shift) % 5];
-            result += matrix[posB.row * 5 + (posB.col + shift) % 5];
-        } else if (posA.col === posB.col) {
-            result += matrix[((posA.row + shift) % 5) * 5 + posA.col];
-            result += matrix[((posB.row + shift) % 5) * 5 + posB.col];
-        } else {
-            result += matrix[posA.row * 5 + posB.col];
-            result += matrix[posB.row * 5 + posA.col];
-        }
-    }
-    return result;
-}
+### Cách phá mã (không cần khoá):
 
-function encrypt() {
-    let text = document.getElementById('text').value;
-    let key = document.getElementById('key').value;
-    document.getElementById('output').value = processPlayfair(text, key, true);
-}
+- Dựa vào phân tích digraph (tần suất cặp ký tự).
 
-function decrypt() {
-    let text = document.getElementById('text').value;
-    let key = document.getElementById('key').value;
-    document.getElementById('output').value = processPlayfair(text, key, false);
-}
-</script>
-</body>
-</html>
-```
-- MÃ HOÁ
+- Brute-force toàn bộ keyspace không khả thi; dùng heuristics / hill-climbing, simulated annealing dựa trên scoring bằng ngôn ngữ (log-likelihood) để tìm bảng gần đúng.
+
+- Nếu có plaintext đoạn nhỏ (known-plaintext) hoặc mẫu digraph có thể suy ra.
+
+### MÃ HOÁ 
+
 <img width="757" height="792" alt="image" src="https://github.com/user-attachments/assets/e37cee02-0ab6-4172-ac8a-84b13b91b4bc" />
-- GIẢI MÃ
+
+### GIẢI MÃ
+
 <img width="830" height="796" alt="image" src="https://github.com/user-attachments/assets/0702074b-e3fe-44f7-8222-32d61543cd87" />
 
 
