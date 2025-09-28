@@ -114,240 +114,31 @@
 <img width="1424" height="818" alt="image" src="https://github.com/user-attachments/assets/d378fb33-1ce2-4d8f-81d3-a8525d72881b" />
 
 ## 4. Vigenère
-## Tên gọi:
-- Phương pháp mã hóa Vigenère có tên gọi chính thức là Vigenère Cipher (Mật mã Vigenère).
-- Vigenère Square hoặc Tabula Recta (tên gọi cho bảng chữ cái dùng trong mã hóa/giải mã)
-- Thuộc nhóm mật mã thay thế đa bảng (polyalphabetic substitution cipher).
-## Thuật toán mã hoá, thuật toán giải mã
-### Thuật toán mã hoá
-- Chuẩn hóa văn bản và khóa:
-  + Chỉ dùng chữ cái (A–Z hoặc a–z)
-  + Nếu khóa ngắn hơn văn bản, lặp lại khóa cho đến khi đủ độ dài
-- Mã hóa từng ký tự:
- + Với mỗi ký tự P_i trong văn bản và K_i trong khóa: C_i = (P_i + K_i) \mod 26
- + Trong đó:
-   + P_i: vị trí của ký tự trong bảng chữ cái (A = 0, B = 1, ..., Z = 25)
-   + K_i: vị trí của ký tự khóa tương ứng
-   + C_i: vị trí của ký tự mã hóa
-- Ghép các ký tự mã hóa lại thành bản mã
-### Thuật toán giải hoá
-- Chuẩn hóa bản mã và khóa như bước mã hóa
-- Giải mã từng ký tự:
-  + Với mỗi ký tự C_i trong bản mã và K_i trong khóa: P_i = (C_i - K_i + 26) \mod 26
-  + Trong đó:
-    + C_i: vị trí của ký tự mã hóa
-    + K_i: vị trí của ký tự khóa
-    + P_i: vị trí của ký tự gốc
-- Ghép các ký tự lại để khôi phục văn bản gốc
-## Không gian khoá
-- Không gian khóa của Vigenère chính là tập hợp tất cả các khóa có thể được sử dụng để mã hóa văn bản. Mỗi khóa là một chuỗi ký tự, thường lấy trong bảng chữ cái gồm 26 chữ cái (A–Z).
-- Nếu độ dài khóa là m, thì số lượng khóa có thể là 26𝑚. Điều này cho thấy khi chiều dài khóa càng lớn thì không gian khóa sẽ càng rộng, khiến cho việc thử hết tất cả các khóa trở nên khó khăn hơn.
-## Cách phá mã (mà không cần khoá)
-- Xác định độ dài khóa — Friedman Test (Index of Coincidence):
-  + dùng Index of Coincidence (IC) để ước lượng độ dài khóa trung bình. Vigenère phân chia ciphertext thành các dãy giống Caesar; IC gần với IC của ngôn ngữ khi sắp xếp theo đúng bước khóa.
-  + tính IC tổng của ciphertext, so sánh với IC ngôn ngữ chuẩn; hoặc tách ciphertext theo giả sử độ dài r và tính IC cho từng chuỗi cột; khi r đúng, IC các cột gần với IC tiếng mẹ đẻ.
-- Phân tích tần suất theo cột (columnar frequency analysis):
-  + nếu biết (hoặc đoán) độ dài khóa m, tách ciphertext thành m cột (chuỗi gồm mọi ký tự vị trí i, i+m, i+2m, ...). Mỗi cột là Caesar-cipher; áp dụng phân tích tần suất lên từng cột để tìm shift phù hợp.
-  + cho mỗi cột, thử tất cả 26 shift và dùng chi-squared hoặc tương tự để chọn shift khiến phân bố gần với tần suất chuẩn (E,T,A...). Ghép các shift lại thành khóa.
-  + Ưu/nhược: rất hiệu quả nếu ciphertext dài; kém với văn bản ngắn hoặc bố cục khác thường.
-- Kasiski + frequency (kết hợp):
-  + Ý tưởng: dùng Kasiski/Friedman để tìm m, sau đó frequency analysis để tìm từng ký tự khóa.
-  + Thực tế: là workflow tiêu chuẩn, nhanh và chắc nếu ciphertext đủ dài.
-## Cài đặt thuật toán mã hoá và giải mã bằng code C++ và bằng html+css+javascript
-``` html
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Vigenère Cipher — Tool</title>
-<style>
-  :root{
-    --bg:#0d1117; --card:#0f1724; --accent:#6ee7b7; --muted:#9fb0c8;
-  }
-  *{box-sizing:border-box}
-  body{
-    margin:0; min-height:100vh;
-    font-family: Inter, Roboto, system-ui, Arial;
-    background:linear-gradient(180deg,#071021 0%, #0d1117 100%);
-    color:#e6eef7; display:flex; align-items:center; justify-content:center; padding:28px;
-  }
-  .card{
-    width:100%; max-width:980px;
-    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-    border-radius:12px; padding:18px; box-shadow: 0 12px 36px rgba(2,6,23,0.7);
-    display:grid; grid-template-columns: 1fr 360px; gap:18px;
-  }
-  header{grid-column:1/-1; display:flex; justify-content:space-between; align-items:center}
-  header h1{margin:0;font-size:18px}
-  header p{margin:0;color:var(--muted);font-size:13px}
-  .panel{background:var(--card); padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,0.03)}
-  label{display:block;color:var(--muted);font-size:13px;margin-bottom:6px}
-  textarea,input,select{width:100%; padding:10px 12px; border-radius:8px; border:1px solid rgba(255,255,255,0.04); background:transparent; color:inherit; font-size:14px; outline:none}
-  textarea{min-height:140px; resize:vertical}
-  .row{display:flex; gap:8px}
-  .row > *{flex:1}
-  .controls{display:flex; gap:8px; margin-top:10px; flex-wrap:wrap}
-  button{background:linear-gradient(90deg,var(--accent), #34d399); border:none; color:#052018; padding:10px 12px; border-radius:8px; cursor:pointer; font-weight:700}
-  button.ghost{background:transparent; border:1px solid rgba(255,255,255,0.06); color:var(--muted)}
-  .note{color:var(--muted); margin-top:8px; font-size:13px}
-  .warn{color:#ffd2d2; margin-top:8px; font-size:13px}
-  .output{min-height:120px; white-space:pre-wrap; font-family:ui-monospace,Menlo,monospace; background:rgba(255,255,255,0.01); padding:12px; border-radius:8px; border:1px solid rgba(255,255,255,0.03)}
-  footer{grid-column:1/-1;text-align:center;color:var(--muted);font-size:12px;margin-top:8px}
-  @media (max-width:880px){ .card{grid-template-columns:1fr} .right{order:2} }
-</style>
-</head>
-<body>
-  <div class="card">
-    <header>
-      <div>
-        <h1>Vigenère Cipher — Mã hóa & Giải mã</h1>
-        <p>Giữ nguyên chữ hoa/chữ thường — khóa chỉ dùng chữ cái (khóa sẽ lặp)</p>
-      </div>
-      <div style="text-align:right">
-        <div style="background:rgba(255,255,255,0.02);padding:6px 10px;border-radius:8px;color:var(--muted);font-size:13px">A=0 ... Z=25</div>
-      </div>
-    </header>
 
-    <section class="panel left">
-      <label for="text">Văn bản (Plaintext / Ciphertext)</label>
-      <textarea id="text" placeholder="Nhập văn bản..."></textarea>
+### Tên: Vigenère
 
-      <div style="margin-top:8px" class="row">
-        <div>
-          <label for="key">Khóa (keyword)</label>
-          <input id="key" placeholder="vd: SECRET" />
-        </div>
-        <div>
-          <label for="mode">Chế độ</label>
-          <select id="mode">
-            <option value="encrypt">Mã hóa</option>
-            <option value="decrypt">Giải mã</option>
-          </select>
-        </div>
-      </div>
+### Thuật toán
 
-      <div class="controls">
-        <button id="runBtn">Thực hiện</button>
-        <button id="copyBtn" class="ghost">Sao chép</button>
-        <button id="clearBtn" class="ghost">Xóa</button>
-      </div>
+- Khoá: key là chuỗi ký tự k₀..k_{m-1} (m = độ dài key)
 
-      <div id="warn" class="warn" style="display:none"></div>
-      <div class="note">Lưu ý: khóa sẽ tự động loại bỏ ký tự không phải chữ; nếu khóa rỗng sau chuẩn hóa, sẽ không thể thực hiện.</div>
-    </section>
+- Mã hoá: E(p_i) = (p_i + k_{i mod m}) mod 26 (với k_j là số tương ứng ký tự)
 
-    <aside class="panel right">
-      <label>Kết quả</label>
-      <div id="output" class="output" aria-live="polite"></div>
+- Giải mã: D(c_i) = (c_i - k_{i mod m}) mod 26
 
-      <label style="margin-top:12px">Preview khóa (đã chuẩn hóa)</label>
-      <div id="keyPreview" class="note" style="padding:8px;background:rgba(255,255,255,0.01);border-radius:6px;border:1px solid rgba(255,255,255,0.03)">—</div>
-    </aside>
+### Không gian khoá: 26^m nếu key dài m. Nếu m không biết, attacker dùng Kasiski & Friedman để ước lượng m.
 
-    <footer>Phiên bản: 1.0 — Bấm "Thực hiện" để mã hóa/giải mã.</footer>
-  </div>
+### Cách phá mã (không cần khoá):
 
-<script>
-  // Helpers
-  const textEl = document.getElementById('text');
-  const keyEl = document.getElementById('key');
-  const modeEl = document.getElementById('mode');
-  const runBtn = document.getElementById('runBtn');
-  const outputEl = document.getElementById('output');
-  const keyPreview = document.getElementById('keyPreview');
-  const warnEl = document.getElementById('warn');
-  const copyBtn = document.getElementById('copyBtn');
-  const clearBtn = document.getElementById('clearBtn');
+- Kasiski examination: tìm khoảng cách giữa các pattern lặp để dự đoán độ dài key.
 
-  function sanitizeKey(raw) {
-    // chỉ giữ chữ cái a-z, chuyển về lowercase
-    return (raw || '').split('').filter(ch => /[A-Za-z]/.test(ch)).map(ch => ch.toLowerCase()).join('');
-  }
+- Friedman test / Index of Coincidence (IC): ước lượng m dựa trên IC.
 
-  function showWarn(msg) {
-    if (!msg) { warnEl.style.display = 'none'; warnEl.textContent = ''; }
-    else { warnEl.style.display = 'block'; warnEl.textContent = msg; }
-  }
+- Sau khi biết m, chia ciphertext thành m stream con, áp dụng phân tích tần suất từng stream như Caesar (vì mỗi stream là Caesar).
 
-  function shiftFromChar(ch) { // ch lowercase a-z
-    return ch.charCodeAt(0) - 97;
-  }
-
-  function vigenereProcess(input, rawKey, mode) {
-    const key = sanitizeKey(rawKey);
-    keyPreview.textContent = key.length ? key : '— (không hợp lệ)';
-    if (!key.length) {
-      showWarn('Khóa không hợp lệ: sau khi loại ký tự không phải chữ, khóa rỗng.');
-      return null;
-    }
-    showWarn('');
-    let out = '';
-    let kIdx = 0;
-    const kLen = key.length;
-    for (let i = 0; i < input.length; i++) {
-      const ch = input[i];
-      if (/[A-Za-z]/.test(ch)) {
-        const base = (ch === ch.toUpperCase()) ? 65 : 97;
-        const p = ch.charCodeAt(0) - base;
-        const s = shiftFromChar(key[kIdx % kLen]);
-        let c;
-        if (mode === 'encrypt') {
-          c = (p + s) % 26;
-        } else {
-          c = (p - s + 26) % 26;
-        }
-        out += String.fromCharCode(base + c);
-        kIdx++;
-      } else {
-        // giữ nguyên và KHÔNG tăng kIdx
-        out += ch;
-      }
-    }
-    return out;
-  }
-
-  runBtn.addEventListener('click', () => {
-    const txt = textEl.value || '';
-    const rawKey = keyEl.value || '';
-    const mode = modeEl.value;
-    if (!txt) { showWarn('Nhập văn bản trước.'); return; }
-    const res = vigenereProcess(txt, rawKey, mode);
-    if (res === null) return;
-    outputEl.textContent = res;
-  });
-
-  copyBtn.addEventListener('click', () => {
-    const txt = outputEl.textContent || '';
-    if (!txt) { showWarn('Chưa có kết quả để sao chép.'); return; }
-    navigator.clipboard?.writeText(txt).then(()=> {
-      showWarn('Đã sao chép vào clipboard.');
-      setTimeout(()=> showWarn(''),1300);
-    }).catch(()=> showWarn('Trình duyệt chặn thao tác clipboard.'));
-  });
-
-  clearBtn.addEventListener('click', () => {
-    textEl.value = '';
-    keyEl.value = '';
-    outputEl.textContent = '';
-    keyPreview.textContent = '—';
-    showWarn('');
-  });
-
-  // Live preview key sanitized
-  keyEl.addEventListener('input', () => {
-    keyPreview.textContent = sanitizeKey(keyEl.value) || '—';
-  });
-
-  // init
-  keyPreview.textContent = '—';
-</script>
-</body>
-</html>
-```
-- MÃ HOÁ
+- Brute-force nhỏ cho m nhỏ; dictionary attack nếu key là từ thực.
+### MÃ HOÁ
 <img width="1270" height="656" alt="image" src="https://github.com/user-attachments/assets/19a388fd-5c3b-4c11-b2ec-49b09421059d" />
-- GIẢI MÃ
+### GIẢI MÃ
 <img width="1274" height="669" alt="image" src="https://github.com/user-attachments/assets/f7c78a74-6878-413b-9190-3b2049823484" />
 
 ## 5. Playfair
