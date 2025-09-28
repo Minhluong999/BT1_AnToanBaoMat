@@ -181,7 +181,8 @@
 
 ### MÃ HOÁ 
 
-<img width="757" height="792" alt="image" src="https://github.com/user-attachments/assets/e37cee02-0ab6-4172-ac8a-84b13b91b4bc" />
+<img width="761" height="793" alt="image" src="https://github.com/user-attachments/assets/129c973e-b162-4035-8a57-3e9540fdd253" />
+
 
 ### GIẢI MÃ
 
