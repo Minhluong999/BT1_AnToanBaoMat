@@ -154,17 +154,17 @@
 
 - Chia plaintext thành các digraphs (cặp). Qui tắc:
 
--- Nếu cặp có hai chữ cái giống nhau, chèn chữ cái filler (thường 'X') giữa chúng rồi tiếp tục (ví dụ "BALLOON" → BA LX LO ON).
++ Nếu cặp có hai chữ cái giống nhau, chèn chữ cái filler (thường 'X') giữa chúng rồi tiếp tục (ví dụ "BALLOON" → BA LX LO ON).
 
--- Nếu độ dài lẻ, thêm filler ở cuối.
++ Nếu độ dài lẻ, thêm filler ở cuối.
 
 - Mã hoá mỗi digraph (A,B):
 
--- Nếu A và B ở cùng hàng: thay mỗi chữ bằng chữ ngay bên phải (wrap-around).
++ Nếu A và B ở cùng hàng: thay mỗi chữ bằng chữ ngay bên phải (wrap-around).
 
--- Nếu cùng cột: thay bằng chữ ngay dưới (wrap-around).
++ Nếu cùng cột: thay bằng chữ ngay dưới (wrap-around).
 
--- Nếu khác hàng/cột: thay mỗi chữ bằng chữ ở cùng hàng nhưng cột của chữ kia (tức hình chữ nhật swap columns).
++ Nếu khác hàng/cột: thay mỗi chữ bằng chữ ở cùng hàng nhưng cột của chữ kia (tức hình chữ nhật swap columns).
 
 - Giải mã đảo ngược quy tắc (trái/trên thay vì phải/dưới).
 
