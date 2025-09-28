@@ -25,22 +25,23 @@
 
 ### Thuật toán
 
-  Mã hoá: E(p) = (p + k) mod 26
+ - Mã hoá: E(p) = (p + k) mod 26
 
-  với p = 0..25 (A=0,B=1...), k ∈ {0..25}
+ - với p = 0..25 (A=0,B=1...), k ∈ {0..25}
 
-  Giải mã: D(c) = (c - k) mod 26
+ - Giải mã: D(c) = (c - k) mod 26
 
 ### Không gian khoá: 
-  26 (k = 0..25)
+
+ - 26 (k = 0..25)
 
 ### Cách phá mã (không cần khoá):
 
-  Brute-force thử 26 khả năng.
+-  Brute-force thử 26 khả năng.
 
-  Phân tích tần suất chữ cái (E, T, A...).
+-  Phân tích tần suất chữ cái (E, T, A...).
 
-  Với ngôn ngữ có cấu trúc, 1–2 lượt thử là đủ.
+-  Với ngôn ngữ có cấu trúc, 1–2 lượt thử là đủ.
 
 ### MÃ HOÁ
 
