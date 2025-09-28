@@ -43,7 +43,7 @@ Với ngôn ngữ có cấu trúc, 1–2 lượt thử là đủ.
 
 ### MÃ HOÁ
 <img width="793" height="693" alt="image" src="https://github.com/user-attachments/assets/f7f61ec2-8009-45ad-b3d0-bc49393b6af9" />
-- GIẢI MÃ
+### GIẢI MÃ
 <img width="786" height="678" alt="image" src="https://github.com/user-attachments/assets/62ad0907-ec0e-4a52-97fa-1994b56dd912" />
 
 ## 2. Affine
