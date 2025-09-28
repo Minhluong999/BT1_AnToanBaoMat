@@ -186,7 +186,8 @@
 
 ### GIẢI MÃ
 
-<img width="830" height="796" alt="image" src="https://github.com/user-attachments/assets/0702074b-e3fe-44f7-8222-32d61543cd87" />
+<img width="786" height="801" alt="image" src="https://github.com/user-attachments/assets/87b02879-5dcd-4a56-8995-1374d222bacb" />
+
 
 
  
