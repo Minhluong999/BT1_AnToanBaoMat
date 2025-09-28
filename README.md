@@ -150,15 +150,15 @@
 
 ### Thuật toán (5×5 key square, thường hợp I/J):
 
-- Tạo key square 5×5 từ khoá: ghi các chữ cái khoá (loại trùng lặp), sau đó điền các chữ cái còn lại (thường hợp J→I để có 25 chữ cái).
+1. Tạo key square 5×5 từ khoá: ghi các chữ cái khoá (loại trùng lặp), sau đó điền các chữ cái còn lại (thường hợp J→I để có 25 chữ cái).
 
-- Chia plaintext thành các digraphs (cặp). Qui tắc:
+2. Chia plaintext thành các digraphs (cặp). Qui tắc:
 
 + Nếu cặp có hai chữ cái giống nhau, chèn chữ cái filler (thường 'X') giữa chúng rồi tiếp tục (ví dụ "BALLOON" → BA LX LO ON).
 
 + Nếu độ dài lẻ, thêm filler ở cuối.
 
-- Mã hoá mỗi digraph (A,B):
+3. Mã hoá mỗi digraph (A,B):
 
 + Nếu A và B ở cùng hàng: thay mỗi chữ bằng chữ ngay bên phải (wrap-around).
 
@@ -166,7 +166,7 @@
 
 + Nếu khác hàng/cột: thay mỗi chữ bằng chữ ở cùng hàng nhưng cột của chữ kia (tức hình chữ nhật swap columns).
 
-- Giải mã đảo ngược quy tắc (trái/trên thay vì phải/dưới).
+4. Giải mã đảo ngược quy tắc (trái/trên thay vì phải/dưới).
 
 ### Không gian khoá:
 - Khoá là chuỗi sắp xếp 25 ký tự → 25! (rất lớn). Nhưng nhiều key tương đương nếu dùng quy tắc I/J.
