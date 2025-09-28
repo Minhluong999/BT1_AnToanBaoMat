@@ -56,23 +56,23 @@
 
 ### Thuật toán
 
-  Mã hoá: E(p) = (a * p + b) mod 26, với p∈{0..25}
+ - Mã hoá: E(p) = (a * p + b) mod 26, với p∈{0..25}
 
-  Giải mã: D(c) = a^{-1} * (c - b) mod 26, trong đó a^{-1} là nghịch đảo modulo 26 (a * a^{-1} ≡ 1 mod 26)
+ - Giải mã: D(c) = a^{-1} * (c - b) mod 26, trong đó a^{-1} là nghịch đảo modulo 26 (a * a^{-1} ≡ 1 mod 26)
 
-  Điều kiện: gcd(a,26) = 1 (để tồn tại nghịch đảo). Các a hợp lệ: 1,3,5,7,9,11,15,17,19,21,23,25 (12 giá trị).
+-  Điều kiện: gcd(a,26) = 1 (để tồn tại nghịch đảo). Các a hợp lệ: 1,3,5,7,9,11,15,17,19,21,23,25 (12 giá trị).
 
 ### Không gian khoá: 
 
-  12 lựa chọn cho a × 26 lựa chọn cho b = 312 khả năng.
+-  12 lựa chọn cho a × 26 lựa chọn cho b = 312 khả năng.
 
 ### Cách phá mã (không cần khoá):
 
-  Brute-force trên tất cả (a,b) (312 trường hợp) và dùng kiểm tra ngôn ngữ (wordlist/IC) để chọn ra.
+-  Brute-force trên tất cả (a,b) (312 trường hợp) và dùng kiểm tra ngôn ngữ (wordlist/IC) để chọn ra.
 
-  Phân tích tần suất (một số chuyển đổi tuyến tính của tần suất): tìm ánh xạ giữa hai chữ cái có tần xuất lớn nhất.
+-  Phân tích tần suất (một số chuyển đổi tuyến tính của tần suất): tìm ánh xạ giữa hai chữ cái có tần xuất lớn nhất.
 
-  Nếu có plaintext nổi bật (known-plaintext) dễ phá.
+-  Nếu có plaintext nổi bật (known-plaintext) dễ phá.
 ### MÃ HOÁ
 
 <img width="1325" height="720" alt="image" src="https://github.com/user-attachments/assets/1eb44626-b673-4328-9d05-45bab3f8de76" />
@@ -82,502 +82,35 @@
 <img width="1300" height="726" alt="image" src="https://github.com/user-attachments/assets/2850171c-f009-438d-a664-82f6e94dbfff" />
 
 ## 3. Hoán vị
-## Tên gọi: 
-- Transposition Cipher (Permutation Cipher / Mã hoá hoán vị / Mã hoá chuyển vị)
-- Đây là nhóm phương pháp mã hoá cổ điển dựa trên việc hoán đổi vị trí các ký tự trong bản rõ thay vì thay thế ký tự như Caesar hay Affine.
-## Thuật toán mã hoá, thuật toán giải mã
-### Thuật toán mã hoá
-- Chọn khóa: là một hoán vị của các số từ 1 đến n (với n là độ dài khóa). Ví dụ: khóa = 3 1 4 2.
-- Viết bản rõ theo hàng: xếp bản rõ thành một bảng có n cột.
-- Điền thêm ký tự giả (padding) nếu hàng cuối chưa đủ.
-- Đọc bản mã theo thứ tự cột của khóa: theo chỉ số cột trong khóa, nối lại thành chuỗi bản mã.
-### Thuật toán giải mã
-- Xác định số hàng: chia độ dài bản mã cho số cột (n). Nếu không chia hết, một số cột cuối sẽ có ít ký tự hơn.
-- Chia bản mã vào cột theo thứ tự khóa: lần lượt điền ký tự bản mã vào từng cột dựa trên khóa.
-- Ghép bảng lại theo hàng ngang để thu được bản rõ gốc.
-## Không gian khoá
-- Công thức chung: nếu khóa là một hoán vị của 𝑛 cột thì số khóa khả dĩ là: ∣K∣=n!
-- Là tập hợp tất cả các hoán vị có thể của các cột trong bảng mã hóa. Mỗi hoán vị tương ứng với một khóa duy nhất.
-- Giả sử dùng khóa có độ dài n (tức là chia văn bản thành n cột), thì số lượng hoán vị có thể của các cột là: \text{Không gian khóa} = n!
-## Cách phá mã (mà không cần khoá)
-- Brute-force theo độ dài khóa (Permutation brute-force):
-  + Ý chính: thử mọi hoán vị cho một độ dài khóa cố định.
-  + Bước: đoán 𝑛 (số cột), sinh tất cả 𝑛! hoán vị, áp dụng mỗi hoán vị để tái tạo plaintext, dùng scoring (đếm từ hợp lệ hoặc log-likelihood) để chọn kết quả tốt nhất.
-- Thử mọi độ dài cột + phân chia cột (column length enumeration):
-  + Không biết 𝑛 thì thử các 𝑛 khả dĩ; với mỗi 𝑛 chia ciphertext theo số hàng/col rồi thử hoán vị cột.
-  + Cho mỗi 𝑛 từ 2..max, tính số hàng (và cột ngắn/lâu nếu không đều), rồi brute-force hoán vị cột + scoring.
-- Crib / Known-plaintext (khoảng khớp mẫu):
-  + nếu biết (hoặc đoán) một từ/đoạn xuất hiện trong plaintext (ví dụ "the", "and"), thử căn chỉnh vị trí đó qua các cột để suy ra hoán vị.
-  + đặt mẫu vào các vị trí khả dĩ trong ma trận cột và giải để tìm ánh xạ cột có thể.
-- Phân tích từ/chữ (Word-pattern matching / anagramming)
-- Đánh giá bằng scoring ngôn ngữ (bigrams/trigrams / log-likelihood)
-## Cài đặt thuật toán mã hoá và giải mã bằng code C++ và bằng html+css+javascript
-``` html
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Transposition (Permutation) Cipher — Tool</title>
-<style>
-  :root{
-    --bg:#0b1020; --card:#0f1726; --accent:#ff7a59; --muted:#9fb0c8;
-    --glass: rgba(255,255,255,0.03);
-  }
-  *{box-sizing:border-box}
-  body{
-    margin:0;
-    min-height:100vh;
-    font-family: Inter, Roboto, "Segoe UI", Arial, sans-serif;
-    background: linear-gradient(180deg,#06121a 0%, #0b1020 60%);
-    color:#e8f1f8;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:28px;
-  }
+## Tên: Permutation cipher / Columnar Transposition (hoán vị cột)
 
-  .wrap{
-    width:100%; max-width:1100px;
-    border-radius:12px;
-    padding:18px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-    box-shadow: 0 12px 40px rgba(2,6,23,0.7);
-    display:grid;
-    grid-template-columns: 1fr 420px;
-    gap:18px;
-  }
+### Thuật toán (columnar transposition phổ biến):
 
-  header{grid-column:1/-1; display:flex; align-items:center; justify-content:space-between}
-  header h1{margin:0;font-size:18px}
-  header p{margin:0;color:var(--muted);font-size:13px}
+- Khoá: một permuation (ví dụ: key word "ZEBRAS" → gán thứ tự cột theo chữ cái hoặc bạn cho trực tiếp một perm như 3 1 4 2 ...).
 
-  .panel{
-    background:var(--card);
-    padding:14px;
-    border-radius:10px;
-    border:1px solid rgba(255,255,255,0.03);
-  }
+- Tạo ma trận hàng đủ để chứa plaintext (viết theo hàng, điền kí tự pad nếu cần).
 
-  label{display:block;color:var(--muted);font-size:13px;margin-bottom:6px}
-  textarea, input, select{width:100%; padding:10px 12px; border-radius:8px; border:1px solid rgba(255,255,255,0.04); background:var(--glass); color:inherit; font-size:14px; outline:none}
-  textarea{min-height:140px; resize:vertical}
-  .small{font-size:13px;padding:8px 10px}
-  .row{display:flex; gap:10px}
-  .row > *{flex:1}
+- Đọc ciphertext theo thứ tự cột dựa trên thứ tự perm của khoá.
 
-  .controls{display:flex; gap:8px; margin-top:10px; flex-wrap:wrap}
-  button{background:linear-gradient(90deg,var(--accent), #ffb86b); border:none; color:#08101a; padding:10px 12px; border-radius:8px; cursor:pointer; font-weight:700}
-  button.ghost{background:transparent; border:1px solid rgba(255,255,255,0.06); color:var(--muted); font-weight:600}
-  .note{color:var(--muted); margin-top:8px; font-size:13px}
-  .warn{color:#ffd2d2; font-size:13px; margin-top:8px}
+- Giải mã: Tạo bảng có kích thước phù hợp, gán số kí tự cho mỗi cột theo thứ tự khoá, điền ciphertext cột theo cột, sau đó đọc theo hàng.
 
-  .right .meta{display:flex; gap:8px; margin-bottom:8px; align-items:center}
-  .chip{background:rgba(255,255,255,0.02); padding:8px 10px; border-radius:999px; color:var(--muted); font-size:13px}
-  .output{min-height:120px; white-space:pre-wrap; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; background:rgba(255,255,255,0.01); padding:12px; border-radius:8px; border:1px solid rgba(255,255,255,0.03)}
-  .matrix{margin-top:10px; font-size:13px; color:var(--muted); display:block; max-height:220px; overflow:auto; padding:8px; border-radius:8px; border:1px solid rgba(255,255,255,0.03); background:rgba(255,255,255,0.01)}
-  .perm-preview{margin-top:8px; color:var(--muted); font-size:13px}
+### Không gian khoá: Với độ dài key = n, không gian khoá = n! (rất lớn khi n tăng). Với columnar thường n nhỏ (ví dụ 6–10).
 
-  footer{grid-column:1/-1; text-align:center; color:var(--muted); font-size:12px; margin-top:10px}
-  @media (max-width:980px){
-    .wrap{grid-template-columns: 1fr}
-  }
-</style>
-</head>
-<body>
-  <div class="wrap">
-    <header>
-      <div>
-        <h1>Transposition (Permutation) Cipher — Tool</h1>
-        <p>Columnar transposition: điền theo hàng, đọc theo thứ tự cột (hoán vị)</p>
-      </div>
-      <div class="chip">Columns = n (độ dài khóa)</div>
-    </header>
+### Cách phá mã (không cần khoá):
 
-    <section class="panel">
-      <label for="inputText">Văn bản (Plaintext / Ciphertext)</label>
-      <textarea id="inputText" placeholder="Nhập văn bản..."></textarea>
+- Thử mọi perm (n! — chỉ khả dĩ cho n nhỏ).
 
-      <div class="row" style="margin-top:8px">
-        <div>
-          <label>Kiểu khóa</label>
-          <select id="keyMode">
-            <option value="numeric">Numeric (ví dụ: 3 1 4 2)</option>
-            <option value="keyword">Keyword (ví dụ: ZEBRAS)</option>
-          </select>
-        </div>
-        <div>
-          <label>Số cột (n)</label>
-          <input id="numCols" type="number" min="1" value="4" />
-        </div>
-      </div>
+- Phân tích mẫu từ và vị trí chữ cái, tấn công bằng heuristics: IC, trích xuất từ, ngữ cảnh, simulated annealing / hill-climbing dùng scoring (language model) — thường dùng cho transposition độ dài lớn.
 
-      <div id="numericKeyArea" style="margin-top:8px">
-        <label>Khóa (dạng số - thứ tự đọc cột, 1-based)</label>
-        <input id="numericKey" placeholder="vd: 3 1 4 2" />
-      </div>
+- Kết hợp với substitution (nếu cipher kết hợp).
 
-      <div id="keywordArea" style="display:none; margin-top:8px">
-        <label>Keyword</label>
-        <input id="keyword" placeholder="vd: ZEBRAS" />
-        <div class="note">Keyword sẽ được chuyển thành hoán vị theo thứ tự chữ cái (stable).</div>
-      </div>
 
-      <div style="margin-top:10px">
-        <label>Padding</label>
-        <div style="display:flex; gap:8px">
-          <select id="paddingMode" style="width:160px">
-            <option value="none">Không padding (mặc định)</option>
-            <option value="pad">Thêm padding để làm đầy</option>
-          </select>
-          <input id="padChar" type="text" value="X" maxlength="1" style="width:60px" />
-        </div>
-        <div class="note">Chọn padding nếu bạn muốn làm cho hàng cuối đầy đủ. Nếu không, bản mã giữ nguyên độ dài.</div>
-      </div>
+### MÃ HOÁ
 
-      <div class="controls">
-        <button id="encryptBtn">Mã hóa</button>
-        <button id="decryptBtn">Giải mã</button>
-        <button id="copyBtn" class="ghost">Sao chép</button>
-        <button id="clearBtn" class="ghost">Xóa</button>
-      </div>
-
-      <div id="warn" class="warn" style="display:none"></div>
-      <div class="perm-preview" id="permPreview"></div>
-    </section>
-
-    <aside class="panel right">
-      <div class="meta">
-        <div class="chip">n = <span id="showN">4</span></div>
-        <div class="chip">padding = <span id="showPad">none</span></div>
-      </div>
-
-      <label>Kết quả</label>
-      <div id="output" class="output"></div>
-
-      <label style="margin-top:12px">Preview ma trận (hàng x cột)</label>
-      <div id="matrixPreview" class="matrix" aria-live="polite"></div>
-    </aside>
-
-    <footer>Phiên bản: 1.0 — Lưu ý: tool xử lý chữ & ký tự như nhập (không loại bỏ khoảng trắng tự động).</footer>
-  </div>
-
-<script>
-/* --- Helpers và thuật toán --- */
-function normN(n){
-  n = Number(n) || 0;
-  if (n < 1) n = 1;
-  return Math.floor(n);
-}
-
-// chuyển keyword -> hoán vị 1-based (stable rank)
-function permutationFromKeyword(key){
-  // loại bỏ khoảng trắng đầu/cuối
-  key = key.replace(/^\s+|\s+$/g,'');
-  const arr = [];
-  for (let i=0;i<key.length;i++) arr.push({ch: key[i].toLowerCase(), idx: i});
-  // stable sort theo chữ
-  const sorted = arr.slice().sort((a,b)=>{
-    if (a.ch < b.ch) return -1;
-    if (a.ch > b.ch) return 1;
-    return a.idx - b.idx;
-  });
-  const perm = new Array(key.length);
-  for (let i=0;i<sorted.length;i++){
-    perm[sorted[i].idx] = i+1; // 1-based
-  }
-  return perm;
-}
-
-// parse numeric key "3 1 4 2"
-function parseNumericKey(s){
-  const parts = s.trim().split(/\s+/).filter(Boolean);
-  const out = [];
-  for (let p of parts){
-    const v = parseInt(p,10);
-    if (Number.isNaN(v)) return null;
-    out.push(v);
-  }
-  return out;
-}
-
-// kiểm tra hoán vị 1..n
-function isValidPermutation(perm, n){
-  if (!Array.isArray(perm)) return false;
-  if (perm.length !== n) return false;
-  const seen = new Array(n+1).fill(false);
-  for (let v of perm){
-    if (!Number.isInteger(v) || v < 1 || v > n) return false;
-    if (seen[v]) return false;
-    seen[v] = true;
-  }
-  return true;
-}
-
-// xây ma trận hàng-then-col, trả object {rows, cols, grid, rowsCount, colLengths}
-function buildGridFromPlain(plain, n, padMode, padChar){
-  const len = plain.length;
-  const rows = Math.ceil(len / n);
-  const rmod = len % n;
-  const fullCols = rmod === 0 ? n : rmod; // cột 0..fullCols-1 có rows chars
-  const grid = [];
-  let pos = 0;
-  for (let r=0;r<rows;r++){
-    const row = [];
-    for (let c=0;c<n;c++){
-      if (pos < len){
-        row.push(plain[pos++]);
-      } else {
-        if (padMode === 'pad') row.push(padChar);
-        else row.push(''); // empty cell
-      }
-    }
-    grid.push(row);
-  }
-  // colLengths
-  const colLengths = new Array(n);
-  for (let c=0;c<n;c++){
-    colLengths[c] = (c < fullCols) ? rows : (rows-1);
-    if (padMode === 'pad') colLengths[c] = rows;
-  }
-  return {rows, cols:n, grid, colLengths};
-}
-
-// Encrypt: fill rows left-to-right, then read columns by perm order
-function encryptColumnar(plain, perm, padMode='none', padChar='X'){
-  const n = perm.length;
-  const info = buildGridFromPlain(plain, n, padMode, padChar);
-  // read columns in perm order
-  let out = '';
-  for (let k=0;k<perm.length;k++){
-    const colIdx = perm[k]-1;
-    for (let r=0;r<info.rows;r++){
-      const ch = info.grid[r][colIdx];
-      if (ch !== '') out += ch;
-    }
-    // if padMode == 'pad', empty won't occur
-  }
-  return out;
-}
-
-// Decrypt: determine colLengths (based on plain-filling), then distribute cipher into columns in perm order, then read rows
-function decryptColumnar(cipher, perm, padMode='none', padChar='X'){
-  const n = perm.length;
-  const len = cipher.length;
-  const rows = Math.ceil(len / n);
-  const rmod = len % n;
-  const fullCols = rmod === 0 ? n : rmod;
-  // If original used padMode 'pad' then all columns have rows length
-  const colLen = new Array(n);
-  for (let c=0;c<n;c++){
-    colLen[c] = (c < fullCols) ? rows : (rows-1);
-  }
-  if (padMode === 'pad'){
-    // if padded, ciphertext length will be rows * n; then all have length rows
-    const expected = rows * n;
-    if (len === expected){
-      for (let c=0;c<n;c++) colLen[c] = rows;
-    } else {
-      // best effort: if lengths mismatch, fallback to previous rule
-    }
-  }
-
-  // distribute
-  const colsArr = new Array(n).fill(null).map(()=>[]);
-  let pos = 0;
-  for (let k=0;k<n;k++){
-    const colIdx = perm[k]-1;
-    const L = Math.min(colLen[colIdx], Math.max(0, len - pos));
-    const seg = cipher.substr(pos, L);
-    colsArr[colIdx] = seg.split('');
-    pos += L;
-  }
-
-  // read row-wise
-  let out = '';
-  for (let r=0;r<rows;r++){
-    for (let c=0;c<n;c++){
-      if (colsArr[c][r] !== undefined && colsArr[c][r] !== ''){
-        out += colsArr[c][r];
-      }
-    }
-  }
-
-  // if padMode pad, optionally trim trailing padChar (common)
-  if (padMode === 'pad' && padChar){
-    while (out.endsWith(padChar)) out = out.slice(0,-1);
-  }
-  return out;
-}
-
-/* --- UI Bindings --- */
-const inputText = document.getElementById('inputText');
-const keyMode = document.getElementById('keyMode');
-const numericKeyArea = document.getElementById('numericKeyArea');
-const keywordArea = document.getElementById('keywordArea');
-const numericKey = document.getElementById('numericKey');
-const keyword = document.getElementById('keyword');
-const numCols = document.getElementById('numCols');
-const paddingMode = document.getElementById('paddingMode');
-const padChar = document.getElementById('padChar');
-const encryptBtn = document.getElementById('encryptBtn');
-const decryptBtn = document.getElementById('decryptBtn');
-const copyBtn = document.getElementById('copyBtn');
-const clearBtn = document.getElementById('clearBtn');
-const warn = document.getElementById('warn');
-const output = document.getElementById('output');
-const matrixPreview = document.getElementById('matrixPreview');
-const permPreview = document.getElementById('permPreview');
-const showN = document.getElementById('showN');
-const showPad = document.getElementById('showPad');
-
-function showWarn(msg){
-  if (!msg){ warn.style.display='none'; warn.textContent=''; }
-  else { warn.style.display='block'; warn.textContent = msg; }
-}
-
-function updateUI(){
-  const mode = keyMode.value;
-  numericKeyArea.style.display = (mode === 'numeric') ? 'block' : 'none';
-  keywordArea.style.display = (mode === 'keyword') ? 'block' : 'none';
-  showN.textContent = numCols.value;
-  showPad.textContent = (paddingMode.value === 'none') ? 'none' : `pad '${padChar.value || 'X'}'`;
-  updatePermPreview();
-  previewMatrix();
-}
-keyMode.addEventListener('change', updateUI);
-numCols.addEventListener('input', updateUI);
-paddingMode.addEventListener('change', updateUI);
-padChar.addEventListener('input', updateUI);
-numericKey.addEventListener('input', updateUI);
-keyword.addEventListener('input', updateUI);
-
-function getPermutation(){
-  const n = normN(numCols.value);
-  const mode = keyMode.value;
-  if (mode === 'numeric'){
-    const arr = parseNumericKey(numericKey.value || '');
-    if (!arr || arr.length !== n) return {ok:false, err:'Khóa số phải có đúng ' + n + ' số (1-based).', perm:null};
-    if (!isValidPermutation(arr, n)) return {ok:false, err:'Khóa số không phải hoán vị hợp lệ của 1..' + n, perm:null};
-    return {ok:true, perm:arr};
-  } else {
-    // keyword -> perm length must match n (or we can ignore n and set n = keyword.length)
-    const kw = (keyword.value || '').trim();
-    if (kw.length === 0) return {ok:false, err:'Keyword rỗng.', perm:null};
-    const perm = permutationFromKeyword(kw);
-    if (perm.length !== n){
-      return {ok:false, err:'Độ dài keyword phải bằng n (số cột). Hoặc thay đổi n cho phù hợp.', perm:null};
-    }
-    return {ok:true, perm:perm};
-  }
-}
-
-function updatePermPreview(){
-  const res = getPermutation();
-  if (!res.ok){
-    permPreview.textContent = res.err;
-    permPreview.style.color = '';
-  } else {
-    permPreview.textContent = 'Hoán vị (1-based): ' + res.perm.join(' ');
-    permPreview.style.color = 'var(--muted)';
-  }
-}
-
-function previewMatrix(){
-  const text = inputText.value || '';
-  const n = normN(numCols.value);
-  const padMode = paddingMode.value;
-  const pchar = padChar.value || 'X';
-  if (n <= 0) { matrixPreview.textContent = ''; return; }
-  const info = buildGridFromPlain(text, n, padMode, pchar);
-  // build ASCII preview rows
-  let html = '';
-  for (let r=0;r<info.rows;r++){
-    html += '| ';
-    for (let c=0;c<n;c++){
-      const val = info.grid[r][c] === '' ? '·' : escapeHtml(info.grid[r][c]);
-      html += padCell(val,4) + ' | ';
-    }
-    html += '\n';
-  }
-  matrixPreview.textContent = html;
-}
-
-function padCell(s,len){
-  s = String(s);
-  while (s.length < len) s += ' ';
-  return s;
-}
-
-function escapeHtml(ch){
-  if (ch === '<') return '&lt;';
-  if (ch === '>') return '&gt;';
-  if (ch === '&') return '&amp;';
-  return ch;
-}
-
-encryptBtn.addEventListener('click', ()=>{
-  showWarn('');
-  const text = inputText.value || '';
-  if (text.length === 0){ showWarn('Nhập văn bản trước khi mã hóa.'); return; }
-  const n = normN(numCols.value);
-  if (n <= 0){ showWarn('Số cột không hợp lệ.'); return; }
-  const pm = getPermutation();
-  if (!pm.ok){ showWarn(pm.err); return; }
-  const padMode = paddingMode.value;
-  const padCharacter = padChar.value || 'X';
-  const ct = encryptColumnar(text, pm.perm, padMode, padCharacter);
-  output.textContent = ct;
-  previewMatrix();
-});
-
-decryptBtn.addEventListener('click', ()=>{
-  showWarn('');
-  const text = inputText.value || '';
-  if (text.length === 0){ showWarn('Nhập văn bản (ciphertext) trước khi giải mã.'); return; }
-  const n = normN(numCols.value);
-  if (n <= 0){ showWarn('Số cột không hợp lệ.'); return; }
-  const pm = getPermutation();
-  if (!pm.ok){ showWarn(pm.err); return; }
-  const padMode = paddingMode.value;
-  const padCharacter = padChar.value || 'X';
-  const pt = decryptColumnar(text, pm.perm, padMode, padCharacter);
-  output.textContent = pt;
-  previewMatrix();
-});
-
-copyBtn.addEventListener('click', ()=>{
-  const txt = output.textContent || '';
-  if (!txt){ showWarn('Không có kết quả để sao chép.'); return; }
-  navigator.clipboard?.writeText(txt).then(()=> {
-    showWarn('Đã sao chép vào clipboard.');
-    setTimeout(()=> showWarn(''),1400);
-  }).catch(()=> showWarn('Trình duyệt chặn thao tác clipboard.'));
-});
-
-clearBtn.addEventListener('click', ()=>{
-  inputText.value = '';
-  output.textContent = '';
-  numericKey.value = '';
-  keyword.value = '';
-  updateUI();
-  showWarn('');
-});
-
-/* utils */
-function normN(n){ n = Number(n) || 0; if (n < 1) n = 1; return Math.floor(n); }
-
-// initial UI
-updateUI();
-
-</script>
-</body>
-</html>
-```
-
-- MÃ HOÁ
 <img width="1451" height="816" alt="image" src="https://github.com/user-attachments/assets/6e3a41da-f952-422f-9650-b248e3a65206" />
-- GIẢI MÃ
+
+### GIẢI MÃ
+
 <img width="1424" height="818" alt="image" src="https://github.com/user-attachments/assets/d378fb33-1ce2-4d8f-81d3-a8525d72881b" />
 
 ## 4. Vigenère
